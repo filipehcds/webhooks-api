@@ -1,0 +1,333 @@
+openapi: 3.0.0
+info:
+  title: Webhook API
+  description: API destinada ao cadastro de webhooks e recebimento de notificações.
+  version: 1.0.0
+  contact:
+    email: "apiteam@bexsbanco.com.br"
+tags:
+  - name: "Webhook"
+    description: "Operações para cadastro de webhooks e recebimento de notificações"
+servers:
+  - url: http://api.bexsbanco.com.br
+paths:
+  /v1/webhooks:
+    post:
+      tags:
+        - Webhook
+      summary: Create a Webhook
+      description: |
+        Create a **Webhook** tied to a Partner. 
+      operationId: create-webhook
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Webhook"
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: webhook
+    get:
+      tags:
+        - Webhook
+      summary: List all Webhooks
+      description: Retrieve a list of **Webhooks**.
+      operationId: list-webhoks
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhooksResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: webhook
+  /v1/webhooks/{webhook-id}:
+    get:
+      tags:
+        - Webhook
+      summary: Get a Webhook
+      description: Gets information related to a **Webhook**.
+      operationId: get-webhook
+      parameters:
+        - name: webhook-id
+          in: path
+          description: Webhook ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponse"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: webhook
+    put:
+      tags:
+        - Webhook
+      summary: Update a Webhook
+      description: |
+        Updates a **Webhook**.
+      operationId: put-webhook
+      parameters:
+        - name: webhook-id
+          in: path
+          description: Webhook ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update a Webhook
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Webhook"
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        412:
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: webhook
+    patch:
+      tags:
+        - Webhook
+      summary: Partially Update a Webhook
+      description: |
+        Partially Updates a registered **Webhook**.
+      operationId: patch-webhook
+      parameters:
+        - name: webhook-id
+          in: path
+          description: Webhook ID
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Update a Webhook
+        content:
+          "application/json":
+            schema:
+              $ref: "#/components/schemas/Webhook"
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WebhookResponse"
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        412:
+          description: Precondition Failed
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: webhook
+    delete:
+      tags:
+        - Webhook
+      summary: Delete a Webhook
+      description: Delete a **Webhook**.
+      operationId: delete-webhook
+      parameters:
+        - name: webhook-id
+          in: path
+          description: Webhook ID
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+        400:
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        404:
+          description: Not Found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        500:
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+      x-codegen-request-body-name: webhook
+components:
+  schemas:      
+    Webhook:
+      type: object
+      properties:
+        description:
+          type: string
+          description: An optional description of what the webhook is used for
+          example: Webhook to receive all the customer status updates
+        enabled:
+          type: boolean
+          description: Flag to disable or enable the Webhook
+          example: true
+          default: true
+        url:
+          type: string
+          description: URI to receive the associated events
+          example: https://api.bexsbanco.com.br/events
+          pattern: uri
+        events:
+            type: array
+            items:
+              type: string
+            description: The list of events to enable for this endpoint
+            example: ["customer.status.updated"]
+        api_key:
+          type: string
+          description: The API key is a unique identifier located in the Authorization request header that authenticates the URL registered by the partner
+          example: a4db08b7-5729-4ba9-8c08-f2df493465a1
+      required:
+          - url
+          - events
+          - api_key
+    WebhookResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Webhook ID
+          example: "cca1275d-2770-4a2d-8ab6-4f7e1b12b2fd"
+        description:
+          type: string
+          description: An optional description of what the webhook is used for
+          example: Webhook to receive all the customer status updates
+        enabled:
+          type: boolean
+          description: Flag to disable or enable the Webhook
+          example: true
+        url:
+          type: string
+          description: URI to receive the associated events
+          example: https://api.bexsbanco.com.br/events
+          pattern: uri
+        events:
+            type: array
+            items:
+              type: string
+            description: The list of events enabled for this endpoint
+            example: ["customer.status.updated"]
+        api_key:
+          type: string
+          description: The API key is a unique identifier located in the Authorization request header that authenticates the URL registered by the partner
+          example: a4db08b7-5729-4ba9-8c08-f2df493465a1
+        created_at:
+          type: string
+          format: date-time
+          example: "2021-06-04T19:42:26.539541329Z"
+          pattern: RFC-3339 nano
+          description: "Creation time. Adherent to **RFC-3339 nano**"
+        updated_at:
+          type: string
+          format: date-time  
+          example: "2021-06-04T19:42:26.539541329Z"
+          pattern: RFC-3339 nano
+          description: "Last updated time. Adherent to **RFC-3339 nano**"
+      required:
+          - id
+          - enabled
+          - url
+          - events
+          - api_key
+          - created_at
+          - updated_at
+    WebhooksResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/WebhookResponse" 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+          example: error message
